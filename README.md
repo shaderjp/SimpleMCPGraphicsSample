@@ -1,0 +1,2 @@
+# SimpleMCPGraphicsSample
+C++のシンプルな3DグラフィックスプログラムにシンプルなMCP対応をするサンプルです

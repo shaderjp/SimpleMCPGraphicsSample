@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project>
+  <Target Name="CopySampleAssets" AfterTargets="Build" Condition="'$(ConfigurationType)' == 'Application' and '$(ProjectName)' != 'SimpleMCPGraphicsSampleTests'">
+    <ItemGroup>
+      <SampleAssets Include="$(SampleRoot)Assets\SciFiHelmet\**\*" />
+    </ItemGroup>
+    <Copy SourceFiles="@(SampleAssets)" DestinationFiles="@(SampleAssets->'$(OutDir)Assets\SciFiHelmet\%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
+  </Target>
+</Project>

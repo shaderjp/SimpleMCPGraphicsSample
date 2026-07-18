@@ -1,0 +1,26 @@
+# Project-scoped Codex MCP configuration.
+# Paths are relative to the repository root, so this file works after cloning
+# the repository to a different directory.
+
+# D3D12 is the default backend. Build Release/x64 before starting Codex.
+[mcp_servers.simple_graphics_d3d12]
+command = ".\\Bin\\SimpleMCPGraphicsSampleD3D12\\x64\\Release\\SimpleMCPGraphicsSampleD3D12.exe"
+args = ["--mcp"]
+cwd = "."
+enabled = true
+required = false
+startup_timeout_sec = 10
+tool_timeout_sec = 10
+default_tools_approval_mode = "writes"
+
+# Vulkan is provided as an alternative. To use it, set this entry to true and
+# set simple_graphics_d3d12.enabled to false above.
+[mcp_servers.simple_graphics_vulkan]
+command = ".\\Bin\\SimpleMCPGraphicsSampleVulkan\\x64\\Release\\SimpleMCPGraphicsSampleVulkan.exe"
+args = ["--mcp"]
+cwd = "."
+enabled = false
+required = false
+startup_timeout_sec = 10
+tool_timeout_sec = 10
+default_tools_approval_mode = "writes"

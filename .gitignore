@@ -1,69 +1,67 @@
-# Prerequisites
-*.d
+# Local reference checkout (never part of this repository)
+CodexRealTimeGraphicsSamples-main/
 
-# Compiled Object files
+# Visual Studio / MSBuild
+.vs/
+*.VC.db
+*.VC.opendb
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+Bin/
+Obj/
+[Dd]ebug/
+[Rr]elease/
+x64/
+
+# Generated shaders and runtime files
+*.cso
+*.spv
+imgui.ini
+
+# Package restore and temporary files
+packages/
+*.tmp
+*.log
+
+# Generic C/C++ build artifacts
+*.d
 *.slo
 *.lo
 *.o
 *.obj
-
-# Precompiled Headers
 *.gch
 *.pch
-
-# Linker files
 *.ilk
-
-# Debugger Files
 *.pdb
-
-# Compiled Dynamic libraries
 *.so
 *.dylib
 *.dll
 *.so.*
-
-
-# Fortran module files
 *.mod
 *.smod
-
-# Compiled Static libraries
 *.lai
 *.la
 *.a
 *.lib
-
-# Executables
 *.exe
 *.out
 *.app
 
-# Build directories
+# Other build systems and local caches
 build/
 Build/
 build-*/
-
-# CMake generated files
 CMakeFiles/
 CMakeCache.txt
 cmake_install.cmake
 Makefile
 install_manifest.txt
 compile_commands.json
-
-# Temporary files
-*.tmp
-*.log
-*.bak
-*.swp
-
-# vcpkg
 vcpkg_installed/
-
-# debug information files
-*.dwo
-
-# test output & cache
 Testing/
 .cache/
+*.dwo
+*.bak
+*.swp

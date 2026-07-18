@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project>
+  <PropertyGroup>
+    <SampleRoot>$(MSBuildThisFileDirectory)</SampleRoot>
+    <SampleOutputRoot>$(SampleRoot)Bin\$(MSBuildProjectName)\$(Platform)\$(Configuration)\</SampleOutputRoot>
+    <SampleIntermediateRoot>$(SampleRoot)Obj\$(MSBuildProjectName)\$(Platform)\$(Configuration)\</SampleIntermediateRoot>
+  </PropertyGroup>
+</Project>

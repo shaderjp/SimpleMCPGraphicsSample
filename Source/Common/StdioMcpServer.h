@@ -1,6 +1,7 @@
 #pragma once
 
 #include "McpDispatcher.h"
+#include "McpTransportServer.h"
 
 #include <cstddef>
 #include <memory>
@@ -34,7 +35,7 @@ namespace sample::common
     [[nodiscard]] bool CommandLineHasMcpFlag();
     [[nodiscard]] bool ValidateMcpStandardHandles(std::string& error);
 
-    class StdioMcpServer
+    class StdioMcpServer final : public IMcpTransportServer
     {
     public:
         explicit StdioMcpServer(SceneStateStore& store);
@@ -43,10 +44,10 @@ namespace sample::common
         StdioMcpServer(const StdioMcpServer&) = delete;
         StdioMcpServer& operator=(const StdioMcpServer&) = delete;
 
-        bool Start(void* nativeWindow, std::string& error);
-        void Stop();
-        void Join();
-        [[nodiscard]] bool IsRunning() const noexcept;
+        bool Start(void* nativeWindow, std::string& error) override;
+        void Stop() override;
+        void Join() override;
+        [[nodiscard]] bool IsRunning() const noexcept override;
 
     private:
         struct Impl;

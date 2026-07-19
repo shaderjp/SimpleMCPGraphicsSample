@@ -1,10 +1,11 @@
 #pragma once
 
 #include "DXSample.h"
+#include "McpTransportServer.h"
 #include "SceneState.h"
-#include "StdioMcpServer.h"
 
 #include <chrono>
+#include <memory>
 
 using namespace DirectX;
 using Microsoft::WRL::ComPtr;
@@ -22,7 +23,11 @@ public:
         XMFLOAT2 texcoord;
     };
 
-    SimpleMCPGraphicsSampleD3D12(UINT width, UINT height, std::wstring name);
+    SimpleMCPGraphicsSampleD3D12(
+        UINT width,
+        UINT height,
+        std::wstring name,
+        sample::common::McpTransportFactory mcpTransportFactory = {});
 
     virtual bool OnWindowCreated(HWND window) override;
     virtual void OnInit();
@@ -82,7 +87,7 @@ private:
     UINT8* m_mappedConstantBuffer;
     SceneConstantBuffer m_constantBufferData;
     sample::common::SceneStateStore m_sceneState;
-    sample::common::StdioMcpServer m_mcpServer;
+    std::unique_ptr<sample::common::IMcpTransportServer> m_mcpServer;
     std::chrono::steady_clock::time_point m_fpsWindowStart;
     uint64_t m_frameCount;
     uint64_t m_framesInFpsWindow;

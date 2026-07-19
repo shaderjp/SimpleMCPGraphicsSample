@@ -1,5 +1,14 @@
 # Third-party とライセンス
 
+## cpp-httplib
+
+- Repository: <https://github.com/yhirose/cpp-httplib>
+- Version: `v0.49.0`
+- Commit: `2132205`
+- Location: `ThirdParty/cpp-httplib` Git submodule
+- License: MIT（submodule 内の `LICENSE`）
+- HTTP版プロジェクトだけで使用。TLS機能は有効化していません。
+
 ## Dear ImGui
 
 - Repository: <https://github.com/ocornut/imgui>

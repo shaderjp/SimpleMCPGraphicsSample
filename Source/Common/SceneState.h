@@ -127,6 +127,9 @@ namespace sample::common
         bool mcpRunning = false;
         bool mcpInitialized = false;
         bool mcpWritesEnabled = true;
+        std::string mcpTransport = "none";
+        std::string mcpEndpoint;
+        std::uint32_t mcpActiveSessions = 0;
         std::uint64_t mcpRequestCount = 0;
         std::string mcpLastError;
         std::vector<McpLogEntry> mcpLogs;
@@ -156,6 +159,8 @@ namespace sample::common
         void SetMcpRequested(bool requested);
         void SetMcpRunning(bool running);
         void SetMcpInitialized(bool initialized);
+        void ConfigureMcpTransport(std::string transport, std::string endpoint);
+        void SetMcpSessionStatus(std::uint32_t activeSessions, std::uint32_t initializedSessions);
         void RecordMcpActivity(
             const std::string& method,
             const std::string& tool,

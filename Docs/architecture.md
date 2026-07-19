@@ -3,14 +3,17 @@
 ## 方針
 
 このサンプルでは D3D12 と Vulkan を独立した Windows GUI 実行ファイルとして保ち、
-描画 API を単一の巨大な抽象層へまとめません。C++ で stdio MCP を組み込むときに
-必要な責務だけを `Source/Common` へ切り出しています。
+描画 API を単一の巨大な抽象層へまとめません。C++ で stdio / Streamable HTTP MCP を
+組み込むときに必要な責務だけを `Source/Common` へ切り出しています。
 
 ```mermaid
 flowchart LR
-    Client["MCP client"] <-->|"UTF-8 JSON-RPC / stdio"| Server["StdioMcpServer"]
-    Server --> Dispatcher["McpDispatcher"]
+    StdioClient["stdio MCP client"] <-->|"UTF-8 JSON-RPC / stdio"| Stdio["StdioMcpServer"]
+    HttpClient["HTTP MCP clients"] <-->|"POST / DELETE /mcp"| Http["HttpMcpServer"]
+    Stdio --> Dispatcher["McpDispatcher"]
+    Http --> Sessions["sessionごとの McpDispatcher"]
     Dispatcher --> Store["SceneStateStore"]
+    Sessions --> Store
     UI["Dear ImGui control panel"] --> Store
     Store --> UI
     Store --> Renderer["D3D12 or Vulkan renderer"]
@@ -48,6 +51,13 @@ I/O を持たない同期 JSON-RPC dispatcher です。1行分の JSON を受け
 Win32 の標準ハンドルを `ReadFile` / `WriteFile` で扱う小さな I/O 層です。
 受信を改行でフレーム化し、MCP 専用スレッドで dispatcher を逐次実行します。
 GPU API には触れません。
+
+### HttpMcpServer
+
+`127.0.0.1`だけで待受するStreamable HTTP transportです。HTTP adapterとGPU非依存の
+endpoint/session処理を分離しています。sessionごとに`McpDispatcher`を所有し、scene stateは
+全sessionで共有します。初版はserverからの非同期messageが無いためSSE GETを提供しません。
+HTTP切断はアプリケーション寿命と連動せず、ウィンドウを閉じたときだけlistenerを停止します。
 
 ## 起動と終了
 

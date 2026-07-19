@@ -390,6 +390,7 @@ namespace sample::common
         if (!running)
         {
             application_.mcpInitialized = false;
+            application_.mcpActiveSessions = 0;
         }
     }
 
@@ -397,6 +398,26 @@ namespace sample::common
     {
         std::lock_guard lock(mutex_);
         application_.mcpInitialized = initialized;
+        if (application_.mcpTransport == "stdio")
+        {
+            application_.mcpActiveSessions = initialized ? 1u : 0u;
+        }
+    }
+
+    void SceneStateStore::ConfigureMcpTransport(std::string transport, std::string endpoint)
+    {
+        std::lock_guard lock(mutex_);
+        application_.mcpTransport = std::move(transport);
+        application_.mcpEndpoint = std::move(endpoint);
+    }
+
+    void SceneStateStore::SetMcpSessionStatus(
+        std::uint32_t activeSessions,
+        std::uint32_t initializedSessions)
+    {
+        std::lock_guard lock(mutex_);
+        application_.mcpActiveSessions = activeSessions;
+        application_.mcpInitialized = initializedSessions != 0;
     }
 
     void SceneStateStore::RecordMcpActivity(

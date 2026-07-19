@@ -69,7 +69,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Source\DXSample.h" /><ClInclude Include="Source\DXSampleHelper.h" /><ClInclude Include="Source\SimpleMCPGraphicsSampleD3D12.h" /><ClInclude Include="Source\stdafx.h" /><ClInclude Include="Source\Win32Application.h" />
-    <ClInclude Include="..\Source\Common\ControlPanel.h" /><ClInclude Include="..\Source\Common\McpDispatcher.h" /><ClInclude Include="..\Source\Common\SceneState.h" /><ClInclude Include="..\Source\Common\StdioMcpServer.h" />
+    <ClInclude Include="..\Source\Common\ControlPanel.h" /><ClInclude Include="..\Source\Common\McpDispatcher.h" /><ClInclude Include="..\Source\Common\McpTransportServer.h" /><ClInclude Include="..\Source\Common\SceneState.h" /><ClInclude Include="..\Source\Common\StdioMcpServer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\DXSample.cpp" /><ClCompile Include="Source\Main.cpp" /><ClCompile Include="Source\SimpleMCPGraphicsSampleD3D12.cpp" /><ClCompile Include="Source\Win32Application.cpp" />

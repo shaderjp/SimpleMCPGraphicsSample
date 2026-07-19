@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="HTTP"><UniqueIdentifier>{055F9EF0-3AF9-41B3-9546-13091F34A921}</UniqueIdentifier></Filter>
+    <Filter Include="Renderer"><UniqueIdentifier>{56076780-00E1-44EA-BB80-0FC6349E5373}</UniqueIdentifier></Filter>
+    <Filter Include="Common"><UniqueIdentifier>{821999FD-1DE7-4D46-B783-F1C88225400F}</UniqueIdentifier></Filter>
+    <Filter Include="ThirdParty"><UniqueIdentifier>{95E58EC2-F6B0-4807-8231-FEB04E1A3DE0}</UniqueIdentifier></Filter>
+    <Filter Include="Shaders"><UniqueIdentifier>{B6B6DF63-FE97-46BC-894D-0BD30FD0781D}</UniqueIdentifier></Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\Vulkan\Source\SimpleMCPGraphicsSampleVulkan.h"><Filter>Renderer</Filter></ClInclude>
+    <ClInclude Include="..\..\Source\Common\ControlPanel.h"><Filter>Common</Filter></ClInclude><ClInclude Include="..\..\Source\Common\HttpMcpServer.h"><Filter>Common</Filter></ClInclude><ClInclude Include="..\..\Source\Common\McpDispatcher.h"><Filter>Common</Filter></ClInclude><ClInclude Include="..\..\Source\Common\McpTransportServer.h"><Filter>Common</Filter></ClInclude><ClInclude Include="..\..\Source\Common\SceneState.h"><Filter>Common</Filter></ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Source\Main.cpp"><Filter>HTTP</Filter></ClCompile><ClCompile Include="..\..\Vulkan\Source\SimpleMCPGraphicsSampleVulkan.cpp"><Filter>Renderer</Filter></ClCompile>
+    <ClCompile Include="..\..\Source\Common\ControlPanel.cpp"><Filter>Common</Filter></ClCompile><ClCompile Include="..\..\Source\Common\HttpMcpServer.cpp"><Filter>Common</Filter></ClCompile><ClCompile Include="..\..\Source\Common\McpDispatcher.cpp"><Filter>Common</Filter></ClCompile><ClCompile Include="..\..\Source\Common\SceneState.cpp"><Filter>Common</Filter></ClCompile>
+    <ClCompile Include="..\..\ThirdParty\imgui\imgui.cpp"><Filter>ThirdParty</Filter></ClCompile><ClCompile Include="..\..\ThirdParty\imgui\imgui_draw.cpp"><Filter>ThirdParty</Filter></ClCompile><ClCompile Include="..\..\ThirdParty\imgui\imgui_tables.cpp"><Filter>ThirdParty</Filter></ClCompile><ClCompile Include="..\..\ThirdParty\imgui\imgui_widgets.cpp"><Filter>ThirdParty</Filter></ClCompile><ClCompile Include="..\..\ThirdParty\imgui\backends\imgui_impl_vulkan.cpp"><Filter>ThirdParty</Filter></ClCompile><ClCompile Include="..\..\ThirdParty\imgui\backends\imgui_impl_win32.cpp"><Filter>ThirdParty</Filter></ClCompile>
+  </ItemGroup>
+  <ItemGroup><CustomBuild Include="..\..\Shaders\SimpleMCPGraphicsSample.hlsl"><Filter>Shaders</Filter></CustomBuild></ItemGroup>
+</Project>

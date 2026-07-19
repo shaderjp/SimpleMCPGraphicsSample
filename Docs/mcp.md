@@ -10,7 +10,9 @@
 - 受信メッセージ上限: 1 MiB
 - batch request: 非対応（invalid request）
 
-`Content-Length` ヘッダーは使用しません。HTTP、認証、Prompts、Tasks、Sampling、
+`Content-Length` ヘッダーは使用しません。この文書はstdio版を対象とします。HTTP版は
+[Streamable HTTP MCP](http-mcp.md)、両transportの使い分けは
+[stdio版とStreamable HTTP版の違い](mcp-transports.md)を参照してください。認証、Prompts、Tasks、Sampling、
 Resource subscription、list-changed notification は対象外です。
 
 対応メソッドは次のとおりです。

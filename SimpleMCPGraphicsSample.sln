@@ -8,6 +8,10 @@ Project("{BC8A1FFA-BEE3-4634-8014-F334798102B3}") = "SimpleMCPGraphicsSampleVulk
 EndProject
 Project("{BC8A1FFA-BEE3-4634-8014-F334798102B3}") = "SimpleMCPGraphicsSampleTests", "Tests\SimpleMCPGraphicsSampleTests.vcxproj", "{019E4B56-E6A5-4B56-B16B-A5A4E2786DEF}"
 EndProject
+Project("{BC8A1FFA-BEE3-4634-8014-F334798102B3}") = "SimpleMCPGraphicsSampleHttpD3D12", "Http\D3D12\SimpleMCPGraphicsSampleHttpD3D12.vcxproj", "{20CB9377-5B41-4DAE-9B82-5B67B0147961}"
+EndProject
+Project("{BC8A1FFA-BEE3-4634-8014-F334798102B3}") = "SimpleMCPGraphicsSampleHttpVulkan", "Http\Vulkan\SimpleMCPGraphicsSampleHttpVulkan.vcxproj", "{810E4450-09F4-4DD8-B28A-468945472C97}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -26,6 +30,14 @@ Global
 		{019E4B56-E6A5-4B56-B16B-A5A4E2786DEF}.Debug|x64.Build.0 = Debug|x64
 		{019E4B56-E6A5-4B56-B16B-A5A4E2786DEF}.Release|x64.ActiveCfg = Release|x64
 		{019E4B56-E6A5-4B56-B16B-A5A4E2786DEF}.Release|x64.Build.0 = Release|x64
+		{20CB9377-5B41-4DAE-9B82-5B67B0147961}.Debug|x64.ActiveCfg = Debug|x64
+		{20CB9377-5B41-4DAE-9B82-5B67B0147961}.Debug|x64.Build.0 = Debug|x64
+		{20CB9377-5B41-4DAE-9B82-5B67B0147961}.Release|x64.ActiveCfg = Release|x64
+		{20CB9377-5B41-4DAE-9B82-5B67B0147961}.Release|x64.Build.0 = Release|x64
+		{810E4450-09F4-4DD8-B28A-468945472C97}.Debug|x64.ActiveCfg = Debug|x64
+		{810E4450-09F4-4DD8-B28A-468945472C97}.Debug|x64.Build.0 = Debug|x64
+		{810E4450-09F4-4DD8-B28A-468945472C97}.Release|x64.ActiveCfg = Release|x64
+		{810E4450-09F4-4DD8-B28A-468945472C97}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

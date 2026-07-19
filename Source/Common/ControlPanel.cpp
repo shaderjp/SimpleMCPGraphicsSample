@@ -146,6 +146,10 @@ namespace sample::common
         {
             if (!application.mcpRequested) return "Not started (launch with --mcp)";
             if (!application.mcpRunning) return "Disconnected";
+            if (application.mcpTransport == "streamable-http" && application.mcpActiveSessions == 0)
+            {
+                return "Listening";
+            }
             if (!application.mcpInitialized) return "Connected, initializing";
             return "Connected";
         }
@@ -161,6 +165,15 @@ namespace sample::common
             }
 
             ImGui::Text("Status: %s", ConnectionText(application));
+            ImGui::Text("Transport: %s", application.mcpTransport.c_str());
+            if (!application.mcpEndpoint.empty())
+            {
+                ImGui::TextWrapped("Endpoint: %s", application.mcpEndpoint.c_str());
+            }
+            if (application.mcpTransport == "streamable-http")
+            {
+                ImGui::Text("Sessions: %u", application.mcpActiveSessions);
+            }
             bool writesEnabled = application.mcpWritesEnabled;
             ImGui::BeginDisabled(!application.mcpRequested);
             if (ImGui::Checkbox("Allow MCP writes", &writesEnabled))

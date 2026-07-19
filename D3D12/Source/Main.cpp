@@ -11,6 +11,7 @@
 
 #include "stdafx.h"
 #include "SimpleMCPGraphicsSampleD3D12.h"
+#include "StdioMcpServer.h"
 
 namespace
 {
@@ -44,7 +45,19 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
 
     try
     {
-        SimpleMCPGraphicsSampleD3D12 sample(1280, 720, L"Simple MCP Graphics Sample - D3D12");
+        sample::common::McpTransportFactory transportFactory;
+        if (mcpRequested)
+        {
+            transportFactory = [](sample::common::SceneStateStore& store)
+            {
+                return std::make_unique<sample::common::StdioMcpServer>(store);
+            };
+        }
+        SimpleMCPGraphicsSampleD3D12 sample(
+            1280,
+            720,
+            L"Simple MCP Graphics Sample - D3D12",
+            std::move(transportFactory));
         return Win32Application::Run(&sample, hInstance, nCmdShow);
     }
     catch (const std::exception& exception)

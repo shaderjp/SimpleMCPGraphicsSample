@@ -50,14 +50,20 @@ bool SimpleMCPGraphicsSampleVulkan::QueueFamilyIndices::IsComplete() const
     return graphicsFamily != UINT32_MAX && presentFamily != UINT32_MAX;
 }
 
-SimpleMCPGraphicsSampleVulkan::SimpleMCPGraphicsSampleVulkan(uint32_t width, uint32_t height, const wchar_t* title, bool mcpMode) :
+SimpleMCPGraphicsSampleVulkan::SimpleMCPGraphicsSampleVulkan(
+    uint32_t width,
+    uint32_t height,
+    const wchar_t* title,
+    sample::common::McpTransportFactory mcpTransportFactory) :
     m_width(width),
     m_height(height),
-    m_title(title),
-    m_mcpMode(mcpMode),
-    m_mcpServer(m_stateStore)
+    m_title(title)
 {
-    m_stateStore.SetMcpRequested(m_mcpMode);
+    if (mcpTransportFactory)
+    {
+        m_mcpServer = mcpTransportFactory(m_stateStore);
+    }
+    m_stateStore.SetMcpRequested(m_mcpServer != nullptr);
     m_stateStore.UpdateRendererInfo("Vulkan", "Initializing", false);
 }
 
@@ -77,27 +83,33 @@ int SimpleMCPGraphicsSampleVulkan::Run(HINSTANCE instance, int showCommand)
     try
     {
         InitWindow(instance, showCommand);
-        if (m_mcpMode)
+        if (m_mcpServer)
         {
             std::string error;
-            if (!m_mcpServer.Start(m_hwnd, error))
+            if (!m_mcpServer->Start(m_hwnd, error))
             {
-                throw std::runtime_error("Failed to start stdio MCP server: " + error);
+                throw std::runtime_error("Failed to start MCP server: " + error);
             }
         }
 
         InitVulkan();
         MainLoop();
-        m_mcpServer.Stop();
-        m_mcpServer.Join();
+        if (m_mcpServer)
+        {
+            m_mcpServer->Stop();
+            m_mcpServer->Join();
+        }
         WaitIdle();
         CoUninitialize();
         return 0;
     }
     catch (...)
     {
-        m_mcpServer.Stop();
-        m_mcpServer.Join();
+        if (m_mcpServer)
+        {
+            m_mcpServer->Stop();
+            m_mcpServer->Join();
+        }
         CoUninitialize();
         throw;
     }
@@ -258,8 +270,11 @@ void SimpleMCPGraphicsSampleVulkan::WaitIdle()
 
 void SimpleMCPGraphicsSampleVulkan::Cleanup()
 {
-    m_mcpServer.Stop();
-    m_mcpServer.Join();
+    if (m_mcpServer)
+    {
+        m_mcpServer->Stop();
+        m_mcpServer->Join();
+    }
     m_stateStore.SetRendererReady(false);
 
     if (m_device != VK_NULL_HANDLE)

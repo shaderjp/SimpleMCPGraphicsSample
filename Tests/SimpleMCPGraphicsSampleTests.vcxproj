@@ -15,10 +15,10 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup><OutDir>$(SampleOutputRoot)</OutDir><IntDir>$(SampleIntermediateRoot)</IntDir></PropertyGroup>
   <ItemDefinitionGroup>
-    <ClCompile><WarningLevel>Level4</WarningLevel><PreprocessorDefinitions>WIN32;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions><AdditionalIncludeDirectories>..\Source\Common;..\ThirdParty\json\single_include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories><SDLCheck>true</SDLCheck><LanguageStandard>stdcpp17</LanguageStandard><ConformanceMode>true</ConformanceMode></ClCompile>
-    <Link><SubSystem>Console</SubSystem><GenerateDebugInformation>true</GenerateDebugInformation><AdditionalDependencies>shell32.lib;user32.lib;%(AdditionalDependencies)</AdditionalDependencies></Link>
+    <ClCompile><WarningLevel>Level4</WarningLevel><PreprocessorDefinitions>WIN32;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions><AdditionalIncludeDirectories>..\Source\Common;..\ThirdParty\json\single_include;..\ThirdParty\cpp-httplib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories><SDLCheck>true</SDLCheck><LanguageStandard>stdcpp17</LanguageStandard><ConformanceMode>true</ConformanceMode></ClCompile>
+    <Link><SubSystem>Console</SubSystem><GenerateDebugInformation>true</GenerateDebugInformation><AdditionalDependencies>shell32.lib;user32.lib;ws2_32.lib;bcrypt.lib;%(AdditionalDependencies)</AdditionalDependencies></Link>
   </ItemDefinitionGroup>
-  <ItemGroup><ClInclude Include="..\Source\Common\McpDispatcher.h" /><ClInclude Include="..\Source\Common\SceneState.h" /><ClInclude Include="..\Source\Common\StdioMcpServer.h" /></ItemGroup>
-  <ItemGroup><ClCompile Include="Main.cpp" /><ClCompile Include="..\Source\Common\McpDispatcher.cpp" /><ClCompile Include="..\Source\Common\SceneState.cpp" /><ClCompile Include="..\Source\Common\StdioMcpServer.cpp" /></ItemGroup>
+  <ItemGroup><ClInclude Include="..\Source\Common\HttpMcpServer.h" /><ClInclude Include="..\Source\Common\McpDispatcher.h" /><ClInclude Include="..\Source\Common\McpTransportServer.h" /><ClInclude Include="..\Source\Common\SceneState.h" /><ClInclude Include="..\Source\Common\StdioMcpServer.h" /></ItemGroup>
+  <ItemGroup><ClCompile Include="Main.cpp" /><ClCompile Include="..\Source\Common\HttpMcpServer.cpp" /><ClCompile Include="..\Source\Common\McpDispatcher.cpp" /><ClCompile Include="..\Source\Common\SceneState.cpp" /><ClCompile Include="..\Source\Common\StdioMcpServer.cpp" /></ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 </Project>

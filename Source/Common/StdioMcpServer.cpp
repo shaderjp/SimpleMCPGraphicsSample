@@ -194,6 +194,7 @@ namespace sample::common
 
             stopping.store(false, std::memory_order_release);
             running.store(true, std::memory_order_release);
+            store.ConfigureMcpTransport("stdio", "stdio");
             store.SetMcpRequested(true);
             store.SetMcpRunning(true);
             try

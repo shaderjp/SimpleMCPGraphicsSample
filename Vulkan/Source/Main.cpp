@@ -21,7 +21,19 @@ int WINAPI WinMain(HINSTANCE instance, HINSTANCE, LPSTR, int showCommand)
 
     try
     {
-        SimpleMCPGraphicsSampleVulkan app(1280, 720, L"SimpleMCPGraphicsSample - Vulkan", mcpMode);
+        sample::common::McpTransportFactory transportFactory;
+        if (mcpMode)
+        {
+            transportFactory = [](sample::common::SceneStateStore& store)
+            {
+                return std::make_unique<sample::common::StdioMcpServer>(store);
+            };
+        }
+        SimpleMCPGraphicsSampleVulkan app(
+            1280,
+            720,
+            L"SimpleMCPGraphicsSample - Vulkan",
+            std::move(transportFactory));
         return app.Run(instance, showCommand);
     }
     catch (const std::exception& error)

@@ -32,7 +32,7 @@
     <Link><SubSystem>Windows</SubSystem><GenerateDebugInformation>true</GenerateDebugInformation><EnableCOMDATFolding>true</EnableCOMDATFolding><OptimizeReferences>true</OptimizeReferences><AdditionalLibraryDirectories>$(VULKAN_SDK)\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories><AdditionalDependencies>vulkan-1.lib;windowscodecs.lib;ole32.lib;shell32.lib;user32.lib;%(AdditionalDependencies)</AdditionalDependencies></Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Source\SimpleMCPGraphicsSampleVulkan.h" /><ClInclude Include="..\Source\Common\ControlPanel.h" /><ClInclude Include="..\Source\Common\McpDispatcher.h" /><ClInclude Include="..\Source\Common\SceneState.h" /><ClInclude Include="..\Source\Common\StdioMcpServer.h" />
+    <ClInclude Include="Source\SimpleMCPGraphicsSampleVulkan.h" /><ClInclude Include="..\Source\Common\ControlPanel.h" /><ClInclude Include="..\Source\Common\McpDispatcher.h" /><ClInclude Include="..\Source\Common\McpTransportServer.h" /><ClInclude Include="..\Source\Common\SceneState.h" /><ClInclude Include="..\Source\Common\StdioMcpServer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Main.cpp" /><ClCompile Include="Source\SimpleMCPGraphicsSampleVulkan.cpp" />

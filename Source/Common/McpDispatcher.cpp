@@ -533,6 +533,9 @@ namespace sample::common
                     { "running", app.mcpRunning },
                     { "initialized", app.mcpInitialized },
                     { "writes_enabled", app.mcpWritesEnabled },
+                    { "transport", app.mcpTransport },
+                    { "endpoint", app.mcpEndpoint },
+                    { "active_sessions", app.mcpActiveSessions },
                     { "request_count", app.mcpRequestCount },
                     { "last_error", app.mcpLastError },
                 } },
@@ -594,7 +597,7 @@ namespace sample::common
         {
             const std::string message = std::string("Parse error: ") + exception.what();
             store_.RecordMcpActivity("<parse>", {}, false, message);
-            return { true, ErrorResponse(nullptr, ParseError, "Parse error").dump() };
+            return { true, ErrorResponse(nullptr, ParseError, "Parse error").dump(), false, false };
         }
 
         Json id = nullptr;
@@ -608,7 +611,7 @@ namespace sample::common
             (request.contains("id") && !IsValidId(request.at("id"))))
         {
             store_.RecordMcpActivity("<invalid>", {}, false, "Invalid JSON-RPC request.");
-            return { true, ErrorResponse(id, InvalidRequest, "Invalid Request").dump() };
+            return { true, ErrorResponse(id, InvalidRequest, "Invalid Request").dump(), false, false };
         }
 
         const std::string method = request.at("method").get<std::string>();
@@ -619,9 +622,9 @@ namespace sample::common
             store_.RecordMcpActivity(method, {}, false, "params must be an object.", !isNotification);
             if (isNotification)
             {
-                return {};
+                return { false, {}, false, false };
             }
-            return { true, ErrorResponse(id, InvalidParams, "params must be an object.").dump() };
+            return { true, ErrorResponse(id, InvalidParams, "params must be an object.").dump(), false, false };
         }
 
         HandlerResult handled;
@@ -770,8 +773,13 @@ namespace sample::common
         store_.RecordMcpActivity(method, handled.tool, handled.succeeded, handled.message, !isNotification);
         if (!handled.hasResponse || isNotification)
         {
-            return {};
+            return {
+                false,
+                {},
+                handled.succeeded,
+                handled.succeeded && method == "notifications/initialized",
+            };
         }
-        return { true, handled.response.dump() };
+        return { true, handled.response.dump(), handled.succeeded, false };
     }
 }

@@ -1,3 +1,4 @@
+#include "HttpMcpServer.h"
 #include "McpDispatcher.h"
 #include "SceneState.h"
 #include "StdioMcpServer.h"
@@ -5,6 +6,7 @@
 #include <nlohmann/json.hpp>
 
 #include <atomic>
+#include <chrono>
 #include <cmath>
 #include <cstdint>
 #include <iostream>
@@ -12,6 +14,7 @@
 #include <stdexcept>
 #include <string>
 #include <thread>
+#include <utility>
 #include <vector>
 
 namespace
@@ -109,6 +112,39 @@ namespace
     int ErrorCode(const Json& response)
     {
         return response.at("error").at("code").get<int>();
+    }
+
+    HttpMcpRequest HttpRequest(std::string body, std::string method = "POST")
+    {
+        HttpMcpRequest request;
+        request.method = std::move(method);
+        request.path = "/mcp";
+        request.headers = {
+            { "Content-Type", "application/json" },
+            { "Accept", "application/json, text/event-stream" },
+        };
+        request.body = std::move(body);
+        return request;
+    }
+
+    HttpMcpResponse HttpInitialize(HttpMcpEndpoint& endpoint, int id = 1)
+    {
+        return endpoint.Handle(HttpRequest(Json{
+            { "jsonrpc", "2.0" },
+            { "id", id },
+            { "method", "initialize" },
+            { "params", {
+                { "protocolVersion", McpDispatcher::ProtocolVersion },
+                { "capabilities", Json::object() },
+                { "clientInfo", { { "name", "http-tests" }, { "version", "1" } } },
+            } },
+        }.dump()));
+    }
+
+    void AddSessionHeaders(HttpMcpRequest& request, const std::string& sessionId)
+    {
+        request.headers["MCP-Session-Id"] = sessionId;
+        request.headers["MCP-Protocol-Version"] = McpDispatcher::ProtocolVersion;
     }
 }
 
@@ -462,6 +498,169 @@ int main()
         tests.Check(raw.hasResponse && ErrorCode(Json::parse(raw.responseLine)) == -32600, "invalid JSON-RPC envelope uses invalid-request code");
         raw = dispatcher.DispatchLine(R"([{"jsonrpc":"2.0","id":20,"method":"ping"}])");
         tests.Check(raw.hasResponse && ErrorCode(Json::parse(raw.responseLine)) == -32600, "JSON-RPC batches are rejected");
+    });
+
+    tests.Case("Streamable HTTP validation and Origin policy", [&]
+    {
+        SceneStateStore store;
+        HttpMcpServerOptions options;
+        options.port = 5000;
+        options.allowedOrigins.push_back("https://trusted.example");
+        HttpMcpEndpoint endpoint(store, options);
+
+        HttpMcpRequest request = HttpRequest({}, "GET");
+        HttpMcpResponse response = endpoint.Handle(request);
+        tests.Check(response.status == 405 && response.headers.at("Allow") == "POST, DELETE",
+            "GET reports that standalone SSE is not supported");
+
+        request = HttpRequest(R"({"jsonrpc":"2.0","id":1,"method":"initialize","params":{}})");
+        request.headers["Origin"] = "https://evil.example";
+        response = endpoint.Handle(request);
+        tests.Check(response.status == 403, "untrusted Origin is rejected");
+
+        request.headers["Origin"] = "http://127.0.0.1:5000";
+        response = endpoint.Handle(request);
+        tests.Check(response.status == 200, "same localhost Origin reaches JSON-RPC validation");
+
+        request.headers["Origin"] = "https://trusted.example";
+        response = endpoint.Handle(request);
+        tests.Check(response.status == 200, "explicitly allowed Origin is accepted");
+
+        request = HttpRequest("{}");
+        request.headers.erase("Content-Type");
+        tests.Check(endpoint.Handle(request).status == 415, "missing JSON Content-Type is rejected");
+
+        request = HttpRequest("{}");
+        request.headers["Accept"] = "application/json";
+        tests.Check(endpoint.Handle(request).status == 406, "Accept must advertise JSON and event-stream");
+
+        request = HttpRequest(std::string(HttpMcpEndpoint::MaximumMessageBytes + 1, 'x'));
+        tests.Check(endpoint.Handle(request).status == 413, "HTTP body over 1 MiB is rejected");
+
+        request = HttpRequest(Json::array({ Json::object() }).dump());
+        tests.Check(endpoint.Handle(request).status == 400, "JSON-RPC batch body is rejected");
+    });
+
+    tests.Case("Streamable HTTP session lifecycle and shared state", [&]
+    {
+        SceneStateStore store;
+        HttpMcpServerOptions options;
+        options.port = 5000;
+        HttpMcpEndpoint endpoint(store, options);
+
+        HttpMcpResponse initialized = HttpInitialize(endpoint);
+        tests.Check(initialized.status == 200 && Json::parse(initialized.body).contains("result"),
+            "initialize returns a JSON result");
+        const std::string sessionId = initialized.headers.at("MCP-Session-Id");
+        tests.Check(sessionId.size() == 64, "session ID contains 256 random bits encoded as hex");
+        tests.Check(endpoint.ActiveSessionCount() == 1, "initialize creates one session");
+
+        HttpMcpRequest request = HttpRequest(Json{
+            { "jsonrpc", "2.0" }, { "method", "notifications/initialized" }, { "params", Json::object() },
+        }.dump());
+        AddSessionHeaders(request, sessionId);
+        tests.Check(endpoint.Handle(request).status == 202, "initialized notification returns HTTP 202");
+        ApplicationSnapshot app = store.GetApplicationSnapshot();
+        tests.Check(app.mcpInitialized && app.mcpActiveSessions == 1,
+            "HTTP session state is exposed to the application");
+
+        request = HttpRequest(Json{
+            { "jsonrpc", "2.0" }, { "id", 2 }, { "method", "tools/list" }, { "params", Json::object() },
+        }.dump());
+        AddSessionHeaders(request, sessionId);
+        HttpMcpResponse response = endpoint.Handle(request);
+        tests.Check(response.status == 200 && Json::parse(response.body).at("result").at("tools").size() == 5,
+            "session can call MCP tools");
+
+        request = HttpRequest(Json{
+            { "jsonrpc", "2.0" }, { "id", 99 }, { "result", Json::object() },
+        }.dump());
+        AddSessionHeaders(request, sessionId);
+        tests.Check(endpoint.Handle(request).status == 202, "client JSON-RPC response is accepted");
+
+        request = HttpRequest(Json{
+            { "jsonrpc", "2.0" }, { "id", 3 }, { "method", "tools/list" }, { "params", Json::object() },
+        }.dump());
+        request.headers["MCP-Session-Id"] = sessionId;
+        tests.Check(endpoint.Handle(request).status == 400, "subsequent request requires protocol header");
+
+        request = HttpRequest(Json{
+            { "jsonrpc", "2.0" }, { "id", 4 }, { "method", "tools/list" }, { "params", Json::object() },
+        }.dump());
+        AddSessionHeaders(request, "missing-session");
+        tests.Check(endpoint.Handle(request).status == 404, "unknown session returns HTTP 404");
+
+        request = HttpRequest({}, "DELETE");
+        AddSessionHeaders(request, sessionId);
+        tests.Check(endpoint.Handle(request).status == 204, "DELETE terminates the session");
+        tests.Check(endpoint.ActiveSessionCount() == 0 && !store.GetApplicationSnapshot().mcpInitialized,
+            "deleted session is removed from application status");
+
+        request = HttpRequest(Json{
+            { "jsonrpc", "2.0" }, { "id", 5 }, { "method", "tools/list" }, { "params", Json::object() },
+        }.dump());
+        AddSessionHeaders(request, sessionId);
+        tests.Check(endpoint.Handle(request).status == 404, "deleted session cannot be reused");
+    });
+
+    tests.Case("Streamable HTTP session limits, expiry, and concurrency", [&]
+    {
+        SceneStateStore store;
+        HttpMcpServerOptions options;
+        options.maximumSessions = 2;
+        options.sessionIdleTimeout = std::chrono::hours(1);
+        HttpMcpEndpoint endpoint(store, options);
+
+        const HttpMcpResponse first = HttpInitialize(endpoint, 1);
+        const HttpMcpResponse second = HttpInitialize(endpoint, 2);
+        tests.Check(first.status == 200 && second.status == 200, "two independent sessions initialize");
+        tests.Check(HttpInitialize(endpoint, 3).status == 503, "session capacity is enforced");
+
+        const std::string firstId = first.headers.at("MCP-Session-Id");
+        const std::string secondId = second.headers.at("MCP-Session-Id");
+        auto initializeSession = [&](const std::string& id)
+        {
+            HttpMcpRequest request = HttpRequest(Json{
+                { "jsonrpc", "2.0" }, { "method", "notifications/initialized" }, { "params", Json::object() },
+            }.dump());
+            AddSessionHeaders(request, id);
+            endpoint.Handle(request);
+        };
+        initializeSession(firstId);
+        initializeSession(secondId);
+
+        std::thread cameraThread([&]
+        {
+            HttpMcpRequest request = HttpRequest(Json{
+                { "jsonrpc", "2.0" }, { "id", 10 }, { "method", "tools/call" },
+                { "params", { { "name", "set_camera" }, { "arguments", { { "fov_degrees", 52.0 } } } } },
+            }.dump());
+            AddSessionHeaders(request, firstId);
+            endpoint.Handle(request);
+        });
+        std::thread transformThread([&]
+        {
+            HttpMcpRequest request = HttpRequest(Json{
+                { "jsonrpc", "2.0" }, { "id", 11 }, { "method", "tools/call" },
+                { "params", { { "name", "set_transform" },
+                    { "arguments", { { "rotation_degrees", { { "x", 0.0 }, { "y", 35.0 }, { "z", 0.0 } } } } } } },
+            }.dump());
+            AddSessionHeaders(request, secondId);
+            endpoint.Handle(request);
+        });
+        cameraThread.join();
+        transformThread.join();
+        const SceneState state = store.GetSceneState();
+        tests.Check(NearlyEqual(state.camera.fovDegrees, 52.0f) &&
+            NearlyEqual(state.transform.rotationDegrees.y, 35.0f),
+            "concurrent sessions update independent scene fields");
+
+        HttpMcpServerOptions expiringOptions;
+        expiringOptions.sessionIdleTimeout = std::chrono::seconds(0);
+        HttpMcpEndpoint expiringEndpoint(store, expiringOptions);
+        tests.Check(HttpInitialize(expiringEndpoint).status == 200, "expiring session initializes");
+        expiringEndpoint.ExpireIdleSessions();
+        tests.Check(expiringEndpoint.ActiveSessionCount() == 0, "idle session expires");
     });
 
     tests.Case("newline framing, CRLF, EOF, and 1 MiB limit", [&]

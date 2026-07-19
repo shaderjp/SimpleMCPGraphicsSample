@@ -14,11 +14,12 @@
 #include <wincodec.h>
 
 #include "SceneState.h"
-#include "StdioMcpServer.h"
+#include "McpTransportServer.h"
 
 #include <array>
 #include <chrono>
 #include <cstdint>
+#include <memory>
 #include <wrl.h>
 #include <string>
 #include <vector>
@@ -45,7 +46,11 @@ public:
         DirectX::XMFLOAT4 lightColor;
     };
 
-    SimpleMCPGraphicsSampleVulkan(uint32_t width, uint32_t height, const wchar_t* title, bool mcpMode);
+    SimpleMCPGraphicsSampleVulkan(
+        uint32_t width,
+        uint32_t height,
+        const wchar_t* title,
+        sample::common::McpTransportFactory mcpTransportFactory = {});
     ~SimpleMCPGraphicsSampleVulkan();
 
     int Run(HINSTANCE instance, int showCommand);
@@ -140,11 +145,10 @@ private:
     uint32_t m_width;
     uint32_t m_height;
     std::wstring m_title;
-    bool m_mcpMode = false;
     HWND m_hwnd = nullptr;
     HINSTANCE m_instanceHandle = nullptr;
     sample::common::SceneStateStore m_stateStore;
-    sample::common::StdioMcpServer m_mcpServer;
+    std::unique_ptr<sample::common::IMcpTransportServer> m_mcpServer;
 
     VkInstance m_instance = VK_NULL_HANDLE;
     VkSurfaceKHR m_surface = VK_NULL_HANDLE;

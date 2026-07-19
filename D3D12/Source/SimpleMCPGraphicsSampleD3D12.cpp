@@ -63,7 +63,11 @@ namespace
     }
 }
 
-SimpleMCPGraphicsSampleD3D12::SimpleMCPGraphicsSampleD3D12(UINT width, UINT height, std::wstring name) :
+SimpleMCPGraphicsSampleD3D12::SimpleMCPGraphicsSampleD3D12(
+    UINT width,
+    UINT height,
+    std::wstring name,
+    sample::common::McpTransportFactory mcpTransportFactory) :
     DXSample(width, height, name),
     m_viewport(0.0f, 0.0f, static_cast<float>(width), static_cast<float>(height)),
     m_scissorRect(0, 0, static_cast<LONG>(width), static_cast<LONG>(height)),
@@ -72,7 +76,6 @@ SimpleMCPGraphicsSampleD3D12::SimpleMCPGraphicsSampleD3D12(UINT width, UINT heig
     m_imguiDescriptorSize(0),
     m_imguiDescriptorCursor(0),
     m_mappedConstantBuffer(nullptr),
-    m_mcpServer(m_sceneState),
     m_fpsWindowStart(std::chrono::steady_clock::now()),
     m_frameCount(0),
     m_framesInFpsWindow(0),
@@ -81,21 +84,25 @@ SimpleMCPGraphicsSampleD3D12::SimpleMCPGraphicsSampleD3D12(UINT width, UINT heig
     m_fenceEvent(nullptr),
     m_fenceValue(0)
 {
+    if (mcpTransportFactory)
+    {
+        m_mcpServer = mcpTransportFactory(m_sceneState);
+    }
     m_sceneState.UpdateRendererInfo("D3D12", "Initializing", false);
 }
 
 bool SimpleMCPGraphicsSampleD3D12::OnWindowCreated(HWND window)
 {
-    m_sceneState.SetMcpRequested(IsMcpRequested());
-    if (!IsMcpRequested())
+    m_sceneState.SetMcpRequested(m_mcpServer != nullptr);
+    if (!m_mcpServer)
     {
         return true;
     }
 
     std::string error;
-    if (!m_mcpServer.Start(static_cast<void*>(window), error))
+    if (!m_mcpServer->Start(static_cast<void*>(window), error))
     {
-        WriteStderr("Failed to start MCP stdio server: " + error);
+        WriteStderr("Failed to start MCP server: " + error);
         return false;
     }
     return true;
@@ -372,8 +379,11 @@ void SimpleMCPGraphicsSampleD3D12::OnRender()
 void SimpleMCPGraphicsSampleD3D12::OnDestroy()
 {
     m_sceneState.SetRendererReady(false);
-    m_mcpServer.Stop();
-    m_mcpServer.Join();
+    if (m_mcpServer)
+    {
+        m_mcpServer->Stop();
+        m_mcpServer->Join();
+    }
 
     WaitForPreviousFrame();
     ShutdownImGui();

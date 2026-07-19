@@ -8,7 +8,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\DXSample.h"><Filter>Renderer</Filter></ClInclude><ClInclude Include="Source\DXSampleHelper.h"><Filter>Renderer</Filter></ClInclude><ClInclude Include="Source\SimpleMCPGraphicsSampleD3D12.h"><Filter>Renderer</Filter></ClInclude><ClInclude Include="Source\stdafx.h"><Filter>Renderer</Filter></ClInclude><ClInclude Include="Source\Win32Application.h"><Filter>Renderer</Filter></ClInclude>
-    <ClInclude Include="..\Source\Common\ControlPanel.h"><Filter>Common</Filter></ClInclude><ClInclude Include="..\Source\Common\McpDispatcher.h"><Filter>Common</Filter></ClInclude><ClInclude Include="..\Source\Common\SceneState.h"><Filter>Common</Filter></ClInclude><ClInclude Include="..\Source\Common\StdioMcpServer.h"><Filter>Common</Filter></ClInclude>
+    <ClInclude Include="..\Source\Common\ControlPanel.h"><Filter>Common</Filter></ClInclude><ClInclude Include="..\Source\Common\McpDispatcher.h"><Filter>Common</Filter></ClInclude><ClInclude Include="..\Source\Common\McpTransportServer.h"><Filter>Common</Filter></ClInclude><ClInclude Include="..\Source\Common\SceneState.h"><Filter>Common</Filter></ClInclude><ClInclude Include="..\Source\Common\StdioMcpServer.h"><Filter>Common</Filter></ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\DXSample.cpp"><Filter>Renderer</Filter></ClCompile><ClCompile Include="Source\Main.cpp"><Filter>Renderer</Filter></ClCompile><ClCompile Include="Source\SimpleMCPGraphicsSampleD3D12.cpp"><Filter>Renderer</Filter></ClCompile><ClCompile Include="Source\stdafx.cpp"><Filter>Renderer</Filter></ClCompile><ClCompile Include="Source\Win32Application.cpp"><Filter>Renderer</Filter></ClCompile>

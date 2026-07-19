@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="HTTP"><UniqueIdentifier>{2CB7565E-B7F1-42A9-98F1-48251F9E7761}</UniqueIdentifier></Filter>
+    <Filter Include="Renderer"><UniqueIdentifier>{769173AF-CF95-43F3-B9B5-5D69C1D92EA2}</UniqueIdentifier></Filter>
+    <Filter Include="Common"><UniqueIdentifier>{F5642841-EED7-42AB-95AC-9048E48C789D}</UniqueIdentifier></Filter>
+    <Filter Include="ThirdParty"><UniqueIdentifier>{18571F12-B2D8-44B5-AB0A-5265D6153A99}</UniqueIdentifier></Filter>
+    <Filter Include="Shaders"><UniqueIdentifier>{AE5384E4-8FD9-480A-8482-24D94488B479}</UniqueIdentifier></Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\D3D12\Source\DXSample.h"><Filter>Renderer</Filter></ClInclude><ClInclude Include="..\..\D3D12\Source\DXSampleHelper.h"><Filter>Renderer</Filter></ClInclude><ClInclude Include="..\..\D3D12\Source\SimpleMCPGraphicsSampleD3D12.h"><Filter>Renderer</Filter></ClInclude><ClInclude Include="..\..\D3D12\Source\stdafx.h"><Filter>Renderer</Filter></ClInclude><ClInclude Include="..\..\D3D12\Source\Win32Application.h"><Filter>Renderer</Filter></ClInclude>
+    <ClInclude Include="..\..\Source\Common\ControlPanel.h"><Filter>Common</Filter></ClInclude><ClInclude Include="..\..\Source\Common\HttpMcpServer.h"><Filter>Common</Filter></ClInclude><ClInclude Include="..\..\Source\Common\McpDispatcher.h"><Filter>Common</Filter></ClInclude><ClInclude Include="..\..\Source\Common\McpTransportServer.h"><Filter>Common</Filter></ClInclude><ClInclude Include="..\..\Source\Common\SceneState.h"><Filter>Common</Filter></ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Source\Main.cpp"><Filter>HTTP</Filter></ClCompile>
+    <ClCompile Include="..\..\D3D12\Source\DXSample.cpp"><Filter>Renderer</Filter></ClCompile><ClCompile Include="..\..\D3D12\Source\SimpleMCPGraphicsSampleD3D12.cpp"><Filter>Renderer</Filter></ClCompile><ClCompile Include="..\..\D3D12\Source\Win32Application.cpp"><Filter>Renderer</Filter></ClCompile><ClCompile Include="..\..\D3D12\Source\stdafx.cpp"><Filter>Renderer</Filter></ClCompile>
+    <ClCompile Include="..\..\Source\Common\ControlPanel.cpp"><Filter>Common</Filter></ClCompile><ClCompile Include="..\..\Source\Common\HttpMcpServer.cpp"><Filter>Common</Filter></ClCompile><ClCompile Include="..\..\Source\Common\McpDispatcher.cpp"><Filter>Common</Filter></ClCompile><ClCompile Include="..\..\Source\Common\SceneState.cpp"><Filter>Common</Filter></ClCompile>
+    <ClCompile Include="..\..\ThirdParty\imgui\imgui.cpp"><Filter>ThirdParty</Filter></ClCompile><ClCompile Include="..\..\ThirdParty\imgui\imgui_draw.cpp"><Filter>ThirdParty</Filter></ClCompile><ClCompile Include="..\..\ThirdParty\imgui\imgui_tables.cpp"><Filter>ThirdParty</Filter></ClCompile><ClCompile Include="..\..\ThirdParty\imgui\imgui_widgets.cpp"><Filter>ThirdParty</Filter></ClCompile><ClCompile Include="..\..\ThirdParty\imgui\backends\imgui_impl_dx12.cpp"><Filter>ThirdParty</Filter></ClCompile><ClCompile Include="..\..\ThirdParty\imgui\backends\imgui_impl_win32.cpp"><Filter>ThirdParty</Filter></ClCompile>
+  </ItemGroup>
+  <ItemGroup><CustomBuild Include="..\..\Shaders\SimpleMCPGraphicsSample.hlsl"><Filter>Shaders</Filter></CustomBuild></ItemGroup>
+</Project>

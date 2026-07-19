@@ -12,6 +12,8 @@ namespace sample::common
     {
         bool hasResponse = false;
         std::string responseLine;
+        bool succeeded = false;
+        bool initializedTransition = false;
     };
 
     class McpDispatcher
